@@ -77,6 +77,8 @@ public class QRCodeDownloadManagementActor extends BaseActor {
     requestMap.put(JsonKey.CONTENT_TYPE, "course");
     Map<String, Object> searchResponse = searchCourses(request.getRequestContext(), requestMap, headers);
     List<Map<String, Object>> contents = (List<Map<String, Object>>) searchResponse.get("contents");
+    logger.info(null,"------- request downloadQRCodes -----  "+ request);
+    logger.info(null, "------- contents downloadQRCodes -----  "+ contents);
     if (CollectionUtils.isEmpty(contents))
       throw new ProjectCommonException(
           ResponseCode.errorUserHasNotCreatedAnyCourse.getErrorCode(),
@@ -93,6 +95,7 @@ public class QRCodeDownloadManagementActor extends BaseActor {
                         ((String) content.get("identifier")) + "<<<" + (String) content.get("name"),
                     content -> (List<String>) content.get("dialcodes"), (a,b) -> b, LinkedHashMap::new));
     File file = generateCSVFile(request.getRequestContext(), dialCodesMap);
+    logger.info(null, "------- file downloadQRCodes -----  "+ file.getAbsolutePath());
     Response response = new Response();
     if (null == file)
       throw new ProjectCommonException(
@@ -182,6 +185,7 @@ public class QRCodeDownloadManagementActor extends BaseActor {
           ResponseCode.errorNoDialcodesLinked.getErrorCode(),
           ResponseCode.errorNoDialcodesLinked.getErrorMessage(),
           ResponseCode.CLIENT_ERROR.getResponseCode());
+    logger.info(null,"------- dialCodeMap generateCSVFile -----  "+ dialCodeMap);
     try {
       file = new File(UUID.randomUUID().toString() + ".csv");
       StringBuilder csvFile = new StringBuilder();
@@ -220,6 +224,7 @@ public class QRCodeDownloadManagementActor extends BaseActor {
    */
   private String getQRCodeImageUrl(RequestContext requestContext, String dialCode) {
     // TODO: Dialcode as primary key in cassandra
+    logger.info(null, "------- dialCode getQRCodeImageUrl -----  "+ dialCode + " ------- requestContext getQRCodeImageUrl ----- " + requestContext);
     Response response =
         cassandraOperation.getRecordsByProperty(
                 requestContext, courseDialCodeInfo.getKeySpace(),
@@ -227,15 +232,21 @@ public class QRCodeDownloadManagementActor extends BaseActor {
             JsonKey.FILE_NAME,
             "0_" + dialCode,
             Arrays.asList("url"));
+    logger.info(null,"------- response getQRCodeImageUrl -----  "+ response);
     if (null != response && response.get(JsonKey.RESPONSE) != null) {
       Object obj = response.get(JsonKey.RESPONSE);
+      logger.info(null, "------- obj getQRCodeImageUrl -----  "+ obj.toString());
       if (null != obj && obj instanceof List) {
+        logger.info(null, "------- List getQRCodeImageUrl -----  "+ obj);
         List<Map<String, Object>> listOfMap = (List<Map<String, Object>>) obj;
+        logger.info(null, "------- listOfMap getQRCodeImageUrl -----  "+ listOfMap);
         if (CollectionUtils.isNotEmpty(listOfMap)) {
           //check if template url contains dail storage base path placeholder,if yes then append it with cname url and dial bucket name
           String templateUrl = (String) listOfMap.get(0).get("url");
+          logger.info(null,"------- templateurl getQRCodeImageUrl before----- "+ templateUrl);
           String dailStorageBasePathPlaceHolder = getConfigValue(DIAL_STORAGE_BASE_PATH_PLACEHOLDER);
           templateUrl = resolvePlaceholder(templateUrl, dailStorageBasePathPlaceHolder,getConfigValue(CLOUD_STORAGE_DIAL_BUCKET_NAME));
+          logger.info(null,"------- templateurl getQRCodeImageUrl after-----  "+ templateUrl);
           return templateUrl;
         }
       }
@@ -244,9 +255,11 @@ public class QRCodeDownloadManagementActor extends BaseActor {
   }
 
   private String resolvePlaceholder(String templateUrl, String placeHolder,String containerName) {
+    logger.info(null,"------- templateurl----- "+ templateUrl);
     if (templateUrl.contains(placeHolder))
       templateUrl = templateUrl.replace(placeHolder, CloudStorageUtil.getBaseUrl()
                       + "/" + containerName);
+    logger.info(null, "------- templateurl after if----- "+ templateUrl);
     return templateUrl;
   }
 
