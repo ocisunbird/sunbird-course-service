@@ -410,6 +410,8 @@ public class CourseBatchManagementActor extends BaseActor {
         requestedEndDate,
         requestedEnrollmentEndDate,
         todayDate);
+    System.out.println("requested Start Date::::"+requestedStartDate+":::::::dbBatchStartDate::::::::"
+            +dbBatchStartDate+":::::::::courseBatch.getStartDate():::::::::"+courseBatch.getStartDate());
     courseBatch.setStartDate( 
             null != requestedStartDate
                     ? requestedStartDate
