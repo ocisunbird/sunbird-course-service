@@ -379,6 +379,9 @@ public class CourseBatchManagementActor extends BaseActor {
     Date requestedEndDate = getDate(requestContext, JsonKey.END_DATE, req);
     Date requestedEnrollmentEndDate = getDate(requestContext, JsonKey.ENROLLMENT_END_DATE, req);
 
+    System.out.println("Request object start Date:::::::::::::::::"+req.get(JsonKey.START_DATE));
+    System.out.println("timeZone::::::::::::::::"+timeZone);
+
     // After deprecating the text date remove below
     dbBatchStartDate = dbBatchStartDate == null ? getDate(requestContext, JsonKey.OLD_START_DATE, courseBatchMap) : dbBatchStartDate;
     dbBatchEndDate = dbBatchEndDate == null ? getDate(requestContext, JsonKey.OLD_END_DATE, courseBatchMap) : dbBatchEndDate;
@@ -514,6 +517,7 @@ public class CourseBatchManagementActor extends BaseActor {
     try {
       SimpleDateFormat format = ProjectUtil.getDateFormatter(dateFormat);
       format.setTimeZone(TimeZone.getTimeZone(timeZone));
+
       if (MapUtils.isEmpty(map)) {
         return format.parse(format.format(new Date()));
       } else {
@@ -521,8 +525,10 @@ public class CourseBatchManagementActor extends BaseActor {
           Date d;
           if (map.get(key) instanceof Date) {
             d = format.parse(format.format(map.get(key)));
+            System.out.println("if condition get Date:::::::::::"+d);
           } else {
             d = format.parse((String) map.get(key));
+            System.out.println("else condition get Date:::::::::::"+d);
           }
           if (key.equalsIgnoreCase(JsonKey.END_DATE) || key.equalsIgnoreCase(JsonKey.ENROLLMENT_END_DATE) ||
                   key.equalsIgnoreCase(JsonKey.OLD_END_DATE) || key.equalsIgnoreCase(JsonKey.OLD_ENROLLMENT_END_DATE)) {
