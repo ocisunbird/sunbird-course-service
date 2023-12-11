@@ -540,7 +540,13 @@ public class CourseBatchManagementActor extends BaseActor {
             cal.set(Calendar.MINUTE, 59);
             return cal.getTime();
           }
-          return d;
+          Calendar calendar = Calendar.getInstance();
+          calendar.setTime(d);
+          calendar.add(Calendar.HOUR_OF_DAY, 5);
+          calendar.add(Calendar.MINUTE, 30);
+          Date formattedDate = calendar.getTime();
+          System.out.println("calender formatted date = " + formattedDate);
+          return formattedDate;
         } else {
           return null;
         }
