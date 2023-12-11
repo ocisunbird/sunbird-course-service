@@ -1,4 +1,5 @@
-FROM sunbird/openjdk-java11-alpine:latest
+FROM sunbird/openjdk-java11-alpine:3.14
+#FROM sunbird/openjdk-java11-alpine:latest
 MAINTAINER "Manojv" "manojv@ilimi.in"
 RUN apk update \
     && apk add  unzip \
