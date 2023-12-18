@@ -512,6 +512,7 @@ public class CourseBatchManagementActor extends BaseActor {
     try {
       SimpleDateFormat format = ProjectUtil.getDateFormatter(dateFormat);
       format.setTimeZone(TimeZone.getTimeZone(timeZone));
+
       if (MapUtils.isEmpty(map)) {
         return format.parse(format.format(new Date()));
       } else {
@@ -532,7 +533,12 @@ public class CourseBatchManagementActor extends BaseActor {
             cal.set(Calendar.MINUTE, 59);
             return cal.getTime();
           }
-          return d;
+          Calendar calendar = Calendar.getInstance();
+          calendar.setTime(d);
+          calendar.add(Calendar.HOUR_OF_DAY, 5);
+          calendar.add(Calendar.MINUTE, 30);
+          Date formattedDate = calendar.getTime();
+          return formattedDate;
         } else {
           return null;
         }
